@@ -2,6 +2,7 @@ package com.gil.finalproject;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -78,14 +79,29 @@ public class MyAdpter extends RecyclerView.Adapter<MyAdpter.MyHolder> {
             myView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    double lat =    currentModel.geometry.location.lat ;
+                    double lat = currentModel.geometry.location.lat ;
                     double lng = currentModel.geometry.location.lng;
                     myMapChnger changer = (myMapChnger) context;
                     changer.changeFragment(lat , lng);
+                    Book book3 = new Book (currentModel.name , currentModel.formatted_address , currentModel.geometry , currentModel.photos);
+                    book3.save();
+
 
 
                 }
 
+            });
+            myView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+
+                   // Intent intent = new Intent(context , Favorits_Activity.class);
+                  //  intent.putExtra("name" , currentModel.name);
+                    //intent.putExtra("adress" , currentModel.formatted_address);
+                    //context.startActivity(intent);
+
+                    return true;
+                }
             });
 
         }

@@ -18,6 +18,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends AppCompatActivity implements myMapChnger, LocationListener {
 
@@ -101,9 +103,12 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
             @Override
             public void onMapReady(GoogleMap googleMap) {
 
-                googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
                 LatLng latLang = new LatLng(lat, lng);
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLang, 16));
+                Marker perth = googleMap.addMarker(new MarkerOptions()
+                        .position(latLang)
+                       .draggable(true));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLang, 17));
             }
         });
     }
