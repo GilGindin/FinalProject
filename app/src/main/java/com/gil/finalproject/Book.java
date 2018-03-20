@@ -13,22 +13,25 @@ import java.util.List;
 
 public class Book extends SugarRecord {
 
-    int ID;
+
     String name;
     String adress;
-    MyLocation geometry;
-    List<PhotoObj> photo;
+    double lat;
+    double lng;
+
 
 
     public Book() {
     }
 
-    public Book( String name, String adress, MyLocation geometry, List<PhotoObj> photo) {
+    public Book( String name, String adress, double lat, double lng) {
         this.name = name;
         this.adress = adress;
-        this.geometry = geometry;
-        this.photo = photo;
+        this.lat = lat;
+        this.lng = lng;
     }
+
+
 
 
 }

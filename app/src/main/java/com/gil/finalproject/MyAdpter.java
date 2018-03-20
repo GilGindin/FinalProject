@@ -2,16 +2,14 @@ package com.gil.finalproject;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.squareup.picasso.Picasso;
-
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,21 +18,23 @@ import java.util.List;
 
 public class MyAdpter extends RecyclerView.Adapter<MyAdpter.MyHolder> {
 
-
+   public List<Book> lastBook = null;
     private List<MyModels> allResults;
     Context context;
     String urlPhoto = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=";
-    String key ="&key=AIzaSyCYU6DaLO1HG8wXJcbPBu84qVz1G4bge5M";
+    String key ="&key=AIzaSyBQKf7VwlWtSsDHKdyFfVI5AvGSZS1dlW8";
 
     public MyAdpter(List<MyModels> allResults, Activity context) {
         this.allResults = allResults;
         this.context = context;
     }
 
+
+
     @Override
     public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View v = LayoutInflater.from(context).inflate(R.layout.single_item, null);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.single_item, parent , false);
         MyHolder mySingle = new MyHolder(v);
         return mySingle;
     }
@@ -48,6 +48,7 @@ public class MyAdpter extends RecyclerView.Adapter<MyAdpter.MyHolder> {
 
     @Override
     public int getItemCount() {
+
         return allResults.size();
     }
 
@@ -55,7 +56,6 @@ public class MyAdpter extends RecyclerView.Adapter<MyAdpter.MyHolder> {
 
         TextView tv;
         TextView tv1;
-        //TextView tv2;
         ImageView modelsIV;
         View myView;
 
@@ -83,10 +83,25 @@ public class MyAdpter extends RecyclerView.Adapter<MyAdpter.MyHolder> {
                     double lng = currentModel.geometry.location.lng;
                     myMapChnger changer = (myMapChnger) context;
                     changer.changeFragment(lat , lng);
-                    Book book3 = new Book (currentModel.name , currentModel.formatted_address , currentModel.geometry , currentModel.photos);
-                    book3.save();
 
+                    Book.deleteAll(Book.class);
 
+                    for (int position = 0; position < allResults.size(); position++) {
+                        String nameDB = allResults.get(position).name;
+                        String adressDB = allResults.get(position).formatted_address;
+                        double latDB = allResults.get(position).geometry.location.lat;
+                        double lngDB = allResults.get(position).geometry.location.lng;
+
+                        List<Book> books = new ArrayList<>();
+                        books.add(new Book(nameDB , adressDB , latDB , lngDB));
+                        Book.saveInTx(books);
+
+                        lastBook = Book.listAll(Book.class);
+
+                        ArrayList<Book> lastBook = new ArrayList<>();
+                        lastBook.addAll(lastBook);
+
+                    }
 
                 }
 
@@ -95,7 +110,7 @@ public class MyAdpter extends RecyclerView.Adapter<MyAdpter.MyHolder> {
                 @Override
                 public boolean onLongClick(View v) {
 
-                   // Intent intent = new Intent(context , Favorits_Activity.class);
+                   // Intent intent = new Intent(context , );
                   //  intent.putExtra("name" , currentModel.name);
                     //intent.putExtra("adress" , currentModel.formatted_address);
                     //context.startActivity(intent);

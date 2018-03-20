@@ -17,6 +17,6 @@ public interface EndPointClient {
     Call<Myresults> getAllResults(@Query("query") String query, @Query("key") String key);
 
     @GET("https://maps.googleapis.com/maps/api/place/nearbysearch/json")
-    Call<Myresults>getAllGeometry (@Query("location") String location , @Query("key") String key);
+    Call<Myresults>getAllGeometry (@Query("location") String locationsData , @Query("query") String searchText ,@Query("radius") String radiusNum, @Query("key") String key);
 
 }

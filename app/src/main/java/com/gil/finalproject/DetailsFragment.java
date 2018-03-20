@@ -17,8 +17,6 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-
-
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -26,9 +24,7 @@ public class DetailsFragment extends Fragment {
 
     private RecyclerView myRV;
     private EndPointClient service;
-    String key ="AIzaSyCYU6DaLO1HG8wXJcbPBu84qVz1G4bge5M";
-    String query = "pizza in yavne";
-    String location = "-33.8670522,151.1957362&radius=500&keyword=sushi";
+    String key ="AIzaSyBQKf7VwlWtSsDHKdyFfVI5AvGSZS1dlW8";
     MyAdpter adapter;
     Retrofit retrofit ;
     String BASE_URL = "https://maps.googleapis.com";
@@ -39,6 +35,7 @@ public class DetailsFragment extends Fragment {
         // Required empty public constructor
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -46,16 +43,14 @@ public class DetailsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_details, container, false);
             myRV = (RecyclerView) view.findViewById(R.id.myRV);
 
-
-                searchText(query);
-
-        return view;
+             return view;
     }
+
 
     public void searchText(String query) {
 
         try {
-            decodedQuery = java.net.URLDecoder.decode(query, "UTF-8");
+            decodedQuery = java.net.URLDecoder.decode(String.valueOf(query), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -66,7 +61,6 @@ public class DetailsFragment extends Fragment {
         service = retrofit.create(EndPointClient.class);
 
          Call<Myresults> myCall = service.getAllResults(decodedQuery , key);
-       // Call<Myresults> myCall = service.getAllGeometry()
         myCall.enqueue(new Callback<Myresults>() {
             @Override
             public void onResponse(Call<Myresults> call, Response<Myresults> response) {
@@ -75,7 +69,9 @@ public class DetailsFragment extends Fragment {
 
                 myRV.setLayoutManager(new GridLayoutManager(getActivity() , 1));
                 adapter = new MyAdpter( alLPlacesResult , getActivity());
+                myRV.setHasFixedSize(true);
                 myRV.setAdapter(adapter);
+               adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -86,5 +82,7 @@ public class DetailsFragment extends Fragment {
         });
 
     }
+
+
 
 }

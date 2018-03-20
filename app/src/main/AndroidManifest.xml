@@ -23,13 +23,13 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCYU6DaLO1HG8wXJcbPBu84qVz1G4bge5M" />
+            android:value="AIzaSyBQKf7VwlWtSsDHKdyFfVI5AvGSZS1dlW8" />
         <meta-data
             android:name="DATABASE"
-            android:value="book.db" />
+            android:value="bookd.db" />
         <meta-data
             android:name="VERSION"
-            android:value="2" />
+            android:value="3" />
         <meta-data
             android:name="QUERY_LOG"
             android:value="true" />
