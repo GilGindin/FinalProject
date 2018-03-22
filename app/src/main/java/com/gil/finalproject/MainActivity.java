@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
         }
         return true;
     }
+
     @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
 
-
+// checking premission for gps location
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -81,6 +82,8 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
             requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 17);
            GilLocationResult();
         } else {
+            //if there's location premission
+            //trying to take the exact location by the GPS
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 500, this);
              myLocation = ((LocationManager) getSystemService(LOCATION_SERVICE)).getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (myLocation == null) {
@@ -92,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
 
             }
         }
-
+//checking if the switch button is on or off
         myTextSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -103,7 +106,8 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
                 }
             }
         });
-
+//search view
+        // the main query from the user to the app
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -113,12 +117,14 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                //checking if the user have internet
                 ConnectivityManager cm = (ConnectivityManager) MainActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
                 boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
                 locationManager = (LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE);
 
-                ///OFFLINE
+                ///OFFLINE mode
+                // taking the list from the last results who was searching by the user
                 if (!isConnected || !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                     isOffline = true;
                     List<Book> nlastSearches = Book.listAll(Book.class);
@@ -128,9 +134,11 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
                     lastRV.setAdapter(LastSearchAdpter);
                     Toast.makeText(MainActivity.this, "OFFLINE - enable GPS and network providers ", Toast.LENGTH_SHORT).show();
                 } else {
+// if online , searching the query with minimum 3 chars to search
 
-                    if (newText.length() > 3) {
 
+                    if (newText.length() > 4) {
+//method that excist in detalis fragment
                         detailsFragment.searchText(newText);
 
                     }
@@ -139,17 +147,20 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////
             }
         });
+        //replacing to detalis fragment
         fragmentManager = getFragmentManager();
         getFragmentManager().beginTransaction().replace(R.id.theMainLayout, detailsFragment).commit();
 
     }
-
+//on pause stop all the app updates , such as gps listiner
     @Override
     protected void onPause() {
         super.onPause();
         locationManager.removeUpdates(this);
     }
 
+    //if the the gps was offline
+    //trying again to take the user previous location
     @Override
     protected void onResume() {
         super.onResume();
@@ -162,6 +173,8 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
         }
     }
 
+    //change fragment methos
+    //reciving lat and lng from MyAdpter where the user clicked in the list of the results
     @Override
     public void changeFragment(final double lat, final double lng) {
 
@@ -181,6 +194,12 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
 
             }
         });
+    }
+
+    @Override
+    public void secondChangeFragment(String name, String adress) {
+        FvoriteFrag frag = new FvoriteFrag();
+        getFragmentManager().beginTransaction().addToBackStack("replace to favorite").replace(R.id.theMainLayout , frag).commit();
     }
 
 
@@ -209,7 +228,7 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
     public void onProviderDisabled(String provider) {
 
     }
-
+//when getting premission to gps provider
     @SuppressLint("MissingPermission")
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -226,13 +245,13 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
                     Log.e("PSY", "not found");
                 } else {
                     Log.e("/////////", loc.getLatitude() + " " + loc.getLongitude());
-                    //Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                 }
             } else {
                 Toast.makeText(this, "please allow GPS provider...", Toast.LENGTH_SHORT).show();
             }
         }
     }
+    //method for locatioin callabck
     public void GilLocationResult () {
 
 

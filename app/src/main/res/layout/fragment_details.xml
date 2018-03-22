@@ -9,6 +9,13 @@
     <!-- TODO: Update blank fragment layout -->
 
 
+    <EditText
+        android:id="@+id/fragED"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/myRV"
         android:layout_width="match_parent"
@@ -16,6 +23,6 @@
         android:divider="#b5b5b5"
         android:dividerHeight="1dp"
         android:listSelector="@drawable/list_selector"
-        android:paddingTop="5dp" />
+        android:paddingTop="10dp" />
 
 </LinearLayout>

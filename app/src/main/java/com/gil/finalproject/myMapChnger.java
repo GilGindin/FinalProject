@@ -7,5 +7,6 @@ package com.gil.finalproject;
 public interface myMapChnger {
 
     public void changeFragment(double lat, double lng);
+    public void secondChangeFragment(String name , String adress);
 
 }
