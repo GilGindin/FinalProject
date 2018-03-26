@@ -3,26 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingTop="10dp"
-    tools:context="com.gil.finalproject.DetailsFragment">
+    tools:context="com.gil.finalproject.TextSearch.DetailsFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
 
-    <EditText
-        android:id="@+id/fragED"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName" />
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/myRV"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:divider="#b5b5b5"
         android:dividerHeight="1dp"
-        android:listSelector="@drawable/list_selector"
-        android:paddingTop="10dp" />
+        android:listSelector="@drawable/list_selector" />
 
 </LinearLayout>

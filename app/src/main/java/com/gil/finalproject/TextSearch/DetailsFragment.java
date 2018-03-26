@@ -1,6 +1,7 @@
-package com.gil.finalproject;
+package com.gil.finalproject.TextSearch;
 
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -9,7 +10,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
+
+import com.gil.finalproject.Book;
+import com.gil.finalproject.Retrofit.EndPointClient;
+import com.gil.finalproject.Retrofit.MyModels;
+import com.gil.finalproject.Retrofit.Myresults;
+import com.gil.finalproject.R;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -25,16 +31,16 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class DetailsFragment extends Fragment {
 
-    private RecyclerView myRV;
-    private EndPointClient service;
+     RecyclerView myRV;
+     EndPointClient service;
     String key = "AIzaSyBQKf7VwlWtSsDHKdyFfVI5AvGSZS1dlW8";
     MyAdpter adapter;
     Retrofit retrofit;
     String BASE_URL = "https://maps.googleapis.com";
-    String query = "pizza in yavne";
     String decodedQuery ;
     public List<Book> lastBook = null;
-    EditText fragED;
+    ProgressDialog dialog;
+
 
     public DetailsFragment() {
         // Required empty public constructor
@@ -47,7 +53,7 @@ public class DetailsFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_details, container, false);
         myRV = (RecyclerView) view.findViewById(R.id.myRV);
-        fragED = (EditText) view.findViewById(R.id.fragED);
+
 
 
         return view;
@@ -66,15 +72,10 @@ public class DetailsFragment extends Fragment {
     {
         e.printStackTrace();
     }
+         dialog = ProgressDialog.show(getActivity() , "searching.." , "searching..");
     //creating retrofit and assign base url
     retrofit =new Retrofit.Builder().
-
-    baseUrl(BASE_URL)
-                .
-
-    addConverterFactory(GsonConverterFactory.create())
-            .
-
+    baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).
     build();
 //connect to the retrofit class with interface class
     service =retrofit.create(EndPointClient.class);
@@ -113,12 +114,15 @@ public class DetailsFragment extends Fragment {
             myRV.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }
+        dialog.dismiss();
     }
 
         @Override
         public void onFailure (Call < Myresults > call, Throwable t){
+            dialog.dismiss();
         Log.d("msg", "t");
     }
+
 
     });
 

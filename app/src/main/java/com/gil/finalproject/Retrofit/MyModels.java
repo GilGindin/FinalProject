@@ -1,4 +1,4 @@
-package com.gil.finalproject;
+package com.gil.finalproject.Retrofit;
 
 
 import java.util.List;
@@ -12,7 +12,7 @@ public class MyModels {
        public   String name;
        public   String formatted_address;
        public MyLocation geometry;
-        List<PhotoObj> photos;
+       public List<PhotoObj> photos;
 
     public MyModels(String name, String formatted_address , MyLocation geometry ) {
         this.name = name;

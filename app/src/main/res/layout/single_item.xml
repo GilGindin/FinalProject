@@ -22,7 +22,7 @@
             android:id="@+id/modelIV"
             android:layout_width="50dip"
             android:layout_height="50dip"
-            app:srcCompat="@android:drawable/btn_star" />
+            app:srcCompat="@drawable/noimage" />
     </LinearLayout>
 
     <TextView

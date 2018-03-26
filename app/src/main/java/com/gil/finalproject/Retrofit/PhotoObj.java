@@ -1,10 +1,10 @@
-package com.gil.finalproject;
+package com.gil.finalproject.Retrofit;
 
 /**
  * Created by gil on 20/02/2018.
  */
 
-class PhotoObj {
+public class PhotoObj {
 
     public String photo_reference;
 }

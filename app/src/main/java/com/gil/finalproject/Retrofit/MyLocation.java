@@ -1,6 +1,7 @@
-package com.gil.finalproject;
+package com.gil.finalproject.Retrofit;
 
 
+import com.gil.finalproject.Retrofit.MyInnerLocation;
 
 /**
  * Created by gil on 20/02/2018.

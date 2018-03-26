@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingTop="5dp"
+    android:paddingTop="0dp"
     android:weightSum="4"
     tools:context="com.gil.finalproject.MainActivity">
 
@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingTop="0dp"></SearchView>
+        android:paddingTop="5dp"></SearchView>
 
 
     <LinearLayout
@@ -30,6 +30,8 @@
             android:layout_height="wrap_content"
             android:text="search by your current location?"
             android:textColor="#040404"
+            android:textOff="No"
+            android:textOn="Yes"
             android:textSize="15dip"
             android:textStyle="bold"
             android:typeface="sans" />

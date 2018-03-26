@@ -1,16 +1,15 @@
-package com.gil.finalproject;
+package com.gil.finalproject.Favorite;
 
 
 import android.os.Bundle;
 import android.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+
+import com.gil.finalproject.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +20,8 @@ import java.util.List;
  */
 public class FvoriteFrag extends Fragment {
 
- ListView faveLV;
- ArrayList<MyModels> myFaveAL;
+     RecyclerView faveRV;
+     List<Favorites> myFaveAL;
     CustomArrayAdpter ArrayAdapter;
 
 
@@ -35,18 +34,22 @@ public class FvoriteFrag extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 View v = inflater.inflate(R.layout.fragment_fvorite, container, false);
+        faveRV = (RecyclerView) v.findViewById(R.id.favoriteRV) ;
+
             Bundle recivreBundle = this.getArguments();
         if (recivreBundle != null) {
-            String name = getArguments().getString("name" );
-            String adress = getArguments().getString("adress");
+            String name = recivreBundle.getString("name" );
+            String adress = recivreBundle.getString("adress");
 
+        myFaveAL = new ArrayList<Favorites>();
+        myFaveAL.add(new Favorites( name,adress));
 
-        faveLV = (ListView) v.findViewById(R.id.faveLV);
-        myFaveAL = new ArrayList<>();
-        myFaveAL.add(new MyModels( name,adress , null));
+            faveRV.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+            ArrayAdapter = new CustomArrayAdpter(getActivity() , myFaveAL);
+            faveRV.setHasFixedSize(true);
+            faveRV.setAdapter(ArrayAdapter);
+            ArrayAdapter.notifyDataSetChanged();
 
-        ArrayAdapter = new CustomArrayAdpter((FragmentActivity) getActivity(), R.layout.favorite_layout , faveLV);
-        faveLV.setAdapter(ArrayAdapter);
     }
 
 

@@ -2,13 +2,20 @@ package com.gil.finalproject;
 
 import android.annotation.SuppressLint;
 import android.app.FragmentManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.BatteryManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +30,10 @@ import android.widget.CompoundButton;
 import android.widget.SearchView;
 import android.widget.Switch;
 import android.widget.Toast;
+
+import com.gil.finalproject.Favorite.FvoriteFrag;
+import com.gil.finalproject.Location.LocationFrag;
+import com.gil.finalproject.TextSearch.DetailsFragment;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -45,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
     static public double newLng;
     Switch myTextSwitch;
     FragmentManager fragmentManager;
+    SensorManager sensorManager;
+
 
     //Action menu bar
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -55,11 +68,17 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.listFragment) {
-            getFragmentManager().beginTransaction().addToBackStack("replacing")
-                    .replace(R.id.theMainLayout, new DetailsFragment()).commit();
+        if (item.getItemId() == R.id.favoriteFrag) {
+            FvoriteFrag favoriteFrag = new FvoriteFrag();
+            getFragmentManager().beginTransaction().addToBackStack("replacing to favorite")
+                    .replace(R.id.theMainLayout,favoriteFrag).commit();
+            return true;
         }
-        return true;
+        else if(item.getItemId() == R.id.sharedPRef){
+
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @SuppressLint("NewApi")
@@ -72,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
         myTextSwitch  = (Switch) findViewById(R.id.switchBTN);
         searchView = (SearchView) findViewById(R.id.searchSV);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        sensorManager= (SensorManager) getSystemService(SENSOR_SERVICE);
 
 
 // checking premission for gps location
@@ -95,17 +115,7 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
 
             }
         }
-//checking if the switch button is on or off
-        myTextSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    LocationFrag locationFragment = new LocationFrag();
-                    getFragmentManager().beginTransaction().addToBackStack("replacing to location frag").replace(R.id.theMainLayout, locationFragment).commit();
 
-                }
-            }
-        });
 //search view
         // the main query from the user to the app
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -116,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
+            public boolean onQueryTextChange(final String newText) {
                 //checking if the user have internet
                 ConnectivityManager cm = (ConnectivityManager) MainActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
@@ -138,7 +148,24 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
 
 
                     if (newText.length() > 4) {
+                        Boolean switchState = myTextSwitch.isChecked();
+                        myTextSwitch.setChecked(false);
+
+//checking if the switch button is on or off
+                        myTextSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                                if(isChecked){
+
 //method that excist in detalis fragment
+                                    LocationFrag locationFragment = new LocationFrag();
+                                    locationFragment.textToSearch=newText;
+                                    getFragmentManager().beginTransaction().addToBackStack("replacing to location frag").replace(R.id.theMainLayout, locationFragment).commit();
+                                  //  locationFragment.searchText(newText);
+                                }
+                            }
+                        });
                         detailsFragment.searchText(newText);
 
                     }
@@ -149,26 +176,64 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
         });
         //replacing to detalis fragment
         fragmentManager = getFragmentManager();
-        getFragmentManager().beginTransaction().replace(R.id.theMainLayout, detailsFragment).commit();
+        getFragmentManager().beginTransaction().addToBackStack("details frag").replace(R.id.theMainLayout, detailsFragment).commit();
 
     }
+    BroadcastReceiver batteryPower = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS , -1);
+            boolean isCharge = status == BatteryManager.BATTERY_STATUS_CHARGING ||
+                    status == BatteryManager.BATTERY_STATUS_FULL;
+            if(isCharge){
+
+                Toast.makeText(context, "Battery charging..", Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(context, "disconnecting charge..", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
+    BroadcastReceiver changingConnection = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals(intent.ACTION_POWER_CONNECTED)){
+
+                Toast.makeText(context, "battery charge", Toast.LENGTH_SHORT).show();
+            }else if(intent.getAction().equals(intent.ACTION_POWER_DISCONNECTED)){
+
+                Toast.makeText(context, "disconnected charging..", Toast.LENGTH_SHORT).show();
+
+            }
+        }
+    };
 //on pause stop all the app updates , such as gps listiner
     @Override
     protected void onPause() {
         super.onPause();
+        unregisterReceiver(changingConnection);
+        unregisterReceiver(batteryPower);
         locationManager.removeUpdates(this);
+        //onsavedinstancestate
     }
+
 
     //if the the gps was offline
     //trying again to take the user previous location
     @Override
     protected void onResume() {
         super.onResume();
+    IntentFilter filtter = new IntentFilter(Intent.ACTION_BATTERY_LOW);
+        filtter.addAction(Intent.ACTION_BATTERY_OKAY);
+        registerReceiver(batteryPower, filtter);
+        registerReceiver(changingConnection, filtter);
+        onProviderEnabled(locationManager.GPS_PROVIDER);
+
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                == PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
                        == PackageManager.PERMISSION_GRANTED) {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 500, this);
+            locationManager = (LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE);
             GilLocationResult();
         }
     }
@@ -198,8 +263,15 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
 
     @Override
     public void secondChangeFragment(String name, String adress) {
+
         FvoriteFrag frag = new FvoriteFrag();
-        getFragmentManager().beginTransaction().addToBackStack("replace to favorite").replace(R.id.theMainLayout , frag).commit();
+        Bundle bundle = new Bundle();
+        bundle.putString("name" ,name);
+        bundle.putString("adress" , adress);
+
+        frag.setArguments(bundle);
+        Toast.makeText(this, "saved to your favorite list", Toast.LENGTH_SHORT).show();
+       // getFragmentManager().beginTransaction().addToBackStack("replace to favorite").replace(R.id.theMainLayout , frag).commit();
     }
 
 
@@ -254,7 +326,6 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
     //method for locatioin callabck
     public void GilLocationResult () {
 
-
         LocationCallback mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -270,5 +341,6 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
         };
     }
 
-}
+
+   }
 

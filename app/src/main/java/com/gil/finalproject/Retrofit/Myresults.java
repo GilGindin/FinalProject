@@ -1,4 +1,4 @@
-package com.gil.finalproject;
+package com.gil.finalproject.Retrofit;
 
 import java.util.List;
 

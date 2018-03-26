@@ -1,18 +1,18 @@
-package com.gil.finalproject;
+package com.gil.finalproject.TextSearch;
 
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.gil.finalproject.Book;
+import com.gil.finalproject.R;
+import com.gil.finalproject.Retrofit.MyModels;
+import com.gil.finalproject.myMapChnger;
 import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ import java.util.List;
 public class MyAdpter extends RecyclerView.Adapter<MyAdpter.MyHolder> {
 
    public List<Book> lastBook = null;
-    private List<MyModels> allResults;
+     List<MyModels> allResults;
     Context context;
     String urlPhoto = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=";
     String key ="&key=AIzaSyBQKf7VwlWtSsDHKdyFfVI5AvGSZS1dlW8";
@@ -36,7 +36,7 @@ public class MyAdpter extends RecyclerView.Adapter<MyAdpter.MyHolder> {
     }
 
 
-//inflate the ciew of the adpter
+    //inflate the ciew of the adpter
     @Override
     public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
@@ -118,16 +118,6 @@ public class MyAdpter extends RecyclerView.Adapter<MyAdpter.MyHolder> {
                 @Override
                 public boolean onLongClick(View v) {
 
-
-                    FvoriteFrag frag = new FvoriteFrag();
-                    Bundle bundle = new Bundle();
-                    String name = currentModel.name.toString();
-                    String adress = currentModel.formatted_address.toString();
-                    bundle.putString("name" ,name);
-                    bundle.putString("adress" , adress);
-
-                    frag.setArguments(bundle);
-                    Toast.makeText(context, "saved to your favorite list", Toast.LENGTH_SHORT).show();
 
                     myMapChnger changer = (myMapChnger) context;
                     changer.secondChangeFragment(currentModel.name , currentModel.formatted_address);
