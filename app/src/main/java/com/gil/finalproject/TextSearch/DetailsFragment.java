@@ -72,7 +72,7 @@ public class DetailsFragment extends Fragment {
     {
         e.printStackTrace();
     }
-         dialog = ProgressDialog.show(getActivity() , "searching.." , "searching..");
+       //  dialog = ProgressDialog.show(getActivity() , "searching.." , "searching..");
     //creating retrofit and assign base url
     retrofit =new Retrofit.Builder().
     baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).
@@ -114,12 +114,12 @@ public class DetailsFragment extends Fragment {
             myRV.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }
-        dialog.dismiss();
+      //  dialog.dismiss();
     }
 
         @Override
         public void onFailure (Call < Myresults > call, Throwable t){
-            dialog.dismiss();
+       //     dialog.dismiss();
         Log.d("msg", "t");
     }
 

@@ -103,7 +103,7 @@ public class LocationFrag extends Fragment {
 
         }
 
-        Call<MyLocationResults> newCall = service.getAllGeometry(locationsData , "500" , decodedQuery , key);
+        Call<MyLocationResults> newCall = service.getAllGeometry(locationsData , "1500" , decodedQuery , key);
         newCall.enqueue(new Callback<MyLocationResults>() {
             @Override
             public void onResponse(Call<MyLocationResults> call, Response<MyLocationResults> response) {
