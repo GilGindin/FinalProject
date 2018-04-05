@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
     Switch myTextSwitch;
     FragmentManager fragmentManager;
     SensorManager sensorManager;
+    BroadcastReceiver receiver;
 
 
     //Action menu bar
@@ -186,44 +187,16 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
         fragmentManager = getFragmentManager();
         getFragmentManager().beginTransaction().addToBackStack("details frag").replace(R.id.theMainLayout, detailsFragment).commit();
 
-
-
     }
-    BroadcastReceiver batteryPower = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS , -1);
-            boolean isCharge = status == BatteryManager.BATTERY_STATUS_CHARGING ||
-                    status == BatteryManager.BATTERY_STATUS_FULL;
-            if(isCharge){
 
-                Toast.makeText(context, "Battery charging..", Toast.LENGTH_SHORT).show();
-            }else {
-                Toast.makeText(context, "disconnecting charge..", Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
-    BroadcastReceiver changingConnection = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals(intent.ACTION_POWER_CONNECTED)){
-
-                Toast.makeText(context, "battery charge", Toast.LENGTH_SHORT).show();
-            }else if(intent.getAction().equals(intent.ACTION_POWER_DISCONNECTED)){
-
-                Toast.makeText(context, "disconnected charging..", Toast.LENGTH_SHORT).show();
-
-            }
-        }
-    };
 //on pause stop all the app updates , such as gps listiner
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(changingConnection);
-        unregisterReceiver(batteryPower);
+    //    unregisterReceiver(changingConnection);
+        unregisterReceiver(receiver);
         locationManager.removeUpdates(this);
-        //onsavedinstancestate
+
     }
 
 ////////////////////////////////////////////////////////////
@@ -237,12 +210,13 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
     @Override
     protected void onResume() {
         super.onResume();
-    IntentFilter filtter = new IntentFilter(Intent.ACTION_BATTERY_LOW);
-        filtter.addAction(Intent.ACTION_BATTERY_OKAY);
-        registerReceiver(batteryPower, filtter);
-        registerReceiver(changingConnection, filtter);
-        onProviderEnabled(locationManager.GPS_PROVIDER);
+         receiver = new PowerConnectionReceiver();
+        IntentFilter ifilter = new IntentFilter();
+        ifilter.addAction(Intent.ACTION_POWER_CONNECTED);
+        ifilter.addAction(Intent.ACTION_POWER_DISCONNECTED);
+        registerReceiver(receiver, ifilter);
 
+        onProviderEnabled(locationManager.GPS_PROVIDER);
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                == PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -376,4 +350,6 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
         return tablet;
       }
      }
+
+
 
