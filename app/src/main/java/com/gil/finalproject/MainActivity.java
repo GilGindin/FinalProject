@@ -16,6 +16,7 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.BatteryManager;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +28,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -94,6 +96,9 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
         sensorManager= (SensorManager) getSystemService(SENSOR_SERVICE);
 
 
+
+
+
 // checking premission for gps location
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED &&
@@ -114,7 +119,9 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
                 newLng = myLocation.getLongitude();
 
             }
+
         }
+
 
 //search view
         // the main query from the user to the app
@@ -166,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
                                 }
                             }
                         });
-                        detailsFragment.searchText(newText);
+                            detailsFragment.searchText(newText);
 
                     }
                 }
@@ -177,6 +184,8 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
         //replacing to detalis fragment
         fragmentManager = getFragmentManager();
         getFragmentManager().beginTransaction().addToBackStack("details frag").replace(R.id.theMainLayout, detailsFragment).commit();
+
+
 
     }
     BroadcastReceiver batteryPower = new BroadcastReceiver() {
@@ -216,6 +225,11 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
         //onsavedinstancestate
     }
 
+////////////////////////////////////////////////////////////
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+    }
 
     //if the the gps was offline
     //trying again to take the user previous location
@@ -236,6 +250,7 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
             locationManager = (LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE);
             GilLocationResult();
         }
+
     }
 
     //change fragment methos
@@ -244,8 +259,14 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
     public void changeFragment(final double lat, final double lng) {
 
         MapFragment LocationFragment = new MapFragment();
-        getFragmentManager().beginTransaction().addToBackStack("replacing").replace(R.id.theMainLayout, LocationFragment).commit();
+        if(isTablet()){
+            getFragmentManager().beginTransaction().addToBackStack("add map").replace(R.id.largeMap , LocationFragment).commit();
 
+        }
+        else {
+
+            getFragmentManager().beginTransaction().addToBackStack("replacing").replace(R.id.theMainLayout, LocationFragment).commit();
+        }
         LocationFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
@@ -271,6 +292,7 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
 
         frag.setArguments(bundle);
         Toast.makeText(this, "saved to your favorite list", Toast.LENGTH_SHORT).show();
+        getFragmentManager().beginTransaction().addToBackStack("replacing to favorite fragment").replace(R.id.theMainLayout , frag).commit();
        // getFragmentManager().beginTransaction().addToBackStack("replace to favorite").replace(R.id.theMainLayout , frag).commit();
     }
 
@@ -341,6 +363,16 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
         };
     }
 
-
-   }
+    public boolean isTablet(){
+      boolean tablet;
+        LinearLayout Xlarge =(LinearLayout) findViewById(R.id.largeMap);
+        LinearLayout Large = (LinearLayout) findViewById(R.id.largeMap);
+        if(Xlarge != null || Large != null){
+            tablet = true;
+        }else {
+            tablet= false;
+        }
+        return tablet;
+      }
+     }
 

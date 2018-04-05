@@ -1,7 +1,7 @@
-package com.gil.finalproject.Retrofit;
+package com.gil.finalproject.TextSearch;
 
 
-import com.gil.finalproject.Retrofit.MyInnerLocation;
+import com.gil.finalproject.TextSearch.MyInnerLocation;
 
 /**
  * Created by gil on 20/02/2018.

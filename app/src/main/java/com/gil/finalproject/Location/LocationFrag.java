@@ -1,6 +1,5 @@
 package com.gil.finalproject.Location;
 
-
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
@@ -17,9 +16,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import com.gil.finalproject.Book;
-import com.gil.finalproject.TextSearch.MyAdpter;
+import com.gil.finalproject.MainActivity;
 import com.gil.finalproject.R;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -29,7 +27,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
 import static android.content.Context.LOCATION_SERVICE;
 
 
@@ -63,6 +60,7 @@ public class LocationFrag extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_location, container, false);
         locationRV = (RecyclerView) v.findViewById(R.id.locationRV);
+
         locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         searchText(textToSearch);
 
@@ -98,9 +96,14 @@ public class LocationFrag extends Fragment {
             }
         } else {
 
-            lastKnowLoc = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            locationsData = "" + lastKnowLoc.getLatitude() + "," + lastKnowLoc.getLongitude();
+           lastKnowLoc = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+           locationsData = "" + lastKnowLoc.getLatitude() + "," + lastKnowLoc.getLongitude();
+           if(locationsData == null){
 
+               double lat = MainActivity.newLat;
+               double lng = MainActivity.newLng;
+               locationsData =""+ lat +" , "+ lng;
+           }
         }
 
         Call<MyLocationResults> newCall = service.getAllGeometry(locationsData , "1500" , decodedQuery , key);

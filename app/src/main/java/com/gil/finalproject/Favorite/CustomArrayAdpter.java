@@ -18,7 +18,7 @@ import java.util.List;
 public class CustomArrayAdpter extends RecyclerView.Adapter<CustomArrayAdpter.MyHolder> {
 
     Context context;
-    List<Favorites> allfev;
+  public   List<Favorites> allfev;
 
     public CustomArrayAdpter(Context context, List<Favorites> allfev) {
         this.context = context;
@@ -28,7 +28,7 @@ public class CustomArrayAdpter extends RecyclerView.Adapter<CustomArrayAdpter.My
     @Override
     public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View v = LayoutInflater.from(context).inflate(R.layout.single_item , parent , false);
+        View v = LayoutInflater.from(context).inflate(R.layout.favorite_single_layout , parent , false);
         MyHolder single = new MyHolder(v);
 
         return single;
@@ -60,9 +60,9 @@ public class CustomArrayAdpter extends RecyclerView.Adapter<CustomArrayAdpter.My
 
         public void bindData(Favorites currentFave){
 
-            text1 = (TextView) view.findViewById(R.id.nameTV);
+            text1 = (TextView) itemView.findViewById(R.id.textView);
             text1.setText(currentFave.name);
-            text2 = (TextView) view.findViewById(R.id.adressTV);
+            text2 = (TextView) itemView.findViewById(R.id.textView2);
             text2.setText(currentFave.adress);
         }
     }

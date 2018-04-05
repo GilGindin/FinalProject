@@ -2,43 +2,58 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/theMainLayout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="5dp"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingTop="0dp"
-    android:weightSum="4"
     tools:context="com.gil.finalproject.MainActivity">
 
-    <SearchView
-        android:id="@+id/searchSV"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginBottom="5dp"
-        android:layout_weight="1"
-        android:paddingTop="5dp"></SearchView>
-
-
     <LinearLayout
+        android:id="@+id/theMainLayout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="0dp"
+        android:orientation="vertical"
+        android:paddingTop="0dp"
+        android:weightSum="4">
 
-        <Switch
-            android:id="@+id/switchBTN"
+        <SearchView
+            android:id="@+id/searchSV"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="search by your current location?"
-            android:textColor="#040404"
-            android:textOff="No"
-            android:textOn="Yes"
-            android:textSize="15dip"
-            android:textStyle="bold"
-            android:typeface="sans" />
+            android:layout_height="0dp"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="1"
+            android:paddingTop="5dp"></SearchView>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:orientation="horizontal">
+
+            <Switch
+                android:id="@+id/switchBTN"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="search by your current location?"
+                android:textColor="#040404"
+                android:textOff="No"
+                android:textOn="Yes"
+                android:textSize="15dip"
+                android:textStyle="bold"
+                android:typeface="sans" />
+
+        </LinearLayout>
+
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/fragmentLL"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorAccent"
+        android:orientation="vertical"></LinearLayout>
 
 </LinearLayout>

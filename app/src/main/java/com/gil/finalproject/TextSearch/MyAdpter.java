@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.gil.finalproject.Book;
 import com.gil.finalproject.R;
-import com.gil.finalproject.Retrofit.MyModels;
 import com.gil.finalproject.myMapChnger;
 import com.squareup.picasso.Picasso;
 import java.util.ArrayList;

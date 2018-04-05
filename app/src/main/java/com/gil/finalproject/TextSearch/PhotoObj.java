@@ -1,4 +1,4 @@
-package com.gil.finalproject.Retrofit;
+package com.gil.finalproject.TextSearch;
 
 /**
  * Created by gil on 20/02/2018.

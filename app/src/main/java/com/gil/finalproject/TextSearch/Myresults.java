@@ -1,4 +1,6 @@
-package com.gil.finalproject.Retrofit;
+package com.gil.finalproject.TextSearch;
+
+import com.gil.finalproject.TextSearch.MyModels;
 
 import java.util.List;
 

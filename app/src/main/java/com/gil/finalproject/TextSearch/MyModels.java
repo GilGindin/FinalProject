@@ -1,4 +1,4 @@
-package com.gil.finalproject.Retrofit;
+package com.gil.finalproject.TextSearch;
 
 
 import java.util.List;

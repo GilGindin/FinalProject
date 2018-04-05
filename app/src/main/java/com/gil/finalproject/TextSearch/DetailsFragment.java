@@ -12,9 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.gil.finalproject.Book;
-import com.gil.finalproject.Retrofit.EndPointClient;
-import com.gil.finalproject.Retrofit.MyModels;
-import com.gil.finalproject.Retrofit.Myresults;
 import com.gil.finalproject.R;
 
 import java.io.UnsupportedEncodingException;

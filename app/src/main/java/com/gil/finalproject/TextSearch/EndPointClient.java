@@ -1,6 +1,4 @@
-package com.gil.finalproject.Retrofit;
-
-import com.gil.finalproject.Retrofit.Myresults;
+package com.gil.finalproject.TextSearch;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
