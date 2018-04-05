@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:key="settings title"
+        android:title="Settings">
+
+        <ListPreference
+            android:dialogTitle="choose one of the following"
+            android:entries="@array/radius"
+            android:entryValues="@array/radius"
+            android:key="list_preference_radius"
+            android:summary="radius (in meters ) of nearby search "
+            android:title="radius length" />
+
+        <ListPreference
+            android:dialogTitle="choose one of the following"
+            android:entries="@array/units"
+            android:entryValues="@array/units"
+            android:key="list_preference_units"
+            android:summary="units for measuring distance"
+            android:title="units" />
+
+        <Preference
+            android:title = "Delete all favourites"
+            android:key="remove_favourites">
+        </Preference>
+
+
+
+
+
+    </PreferenceCategory>
+</PreferenceScreen>

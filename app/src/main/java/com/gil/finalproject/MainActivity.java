@@ -77,7 +77,8 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
             return true;
         }
         else if(item.getItemId() == R.id.sharedPRef){
-
+            settingsFrag frag = new settingsFrag();
+        getFragmentManager().beginTransaction().addToBackStack("fragSetting").replace(R.id.theMainLayout , frag).commit();
 
         }
         return super.onOptionsItemSelected(item);
@@ -362,7 +363,7 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
 
         };
     }
-
+//method to check if the app running on tablet or phone
     public boolean isTablet(){
       boolean tablet;
         LinearLayout Xlarge =(LinearLayout) findViewById(R.id.largeMap);

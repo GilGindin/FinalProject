@@ -2,6 +2,9 @@ package com.gil.finalproject.TextSearch;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.location.Location;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gil.finalproject.Book;
+import com.gil.finalproject.MainActivity;
 import com.gil.finalproject.R;
 import com.gil.finalproject.myMapChnger;
 import com.squareup.picasso.Picasso;
@@ -27,6 +31,9 @@ public class MyAdpter extends RecyclerView.Adapter<MyAdpter.MyHolder> {
     Context context;
     String urlPhoto = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=";
     String key ="&key=AIzaSyBQKf7VwlWtSsDHKdyFfVI5AvGSZS1dlW8";
+    public float [] nearDistanceResults = new float[10];
+    public String nPreference = "kilometre";
+    public double roundedNDis;
 
     //constractur for the adpter
     public MyAdpter(List<MyModels> allResults, Activity context) {
@@ -62,6 +69,7 @@ public class MyAdpter extends RecyclerView.Adapter<MyAdpter.MyHolder> {
 
         TextView tv;
         TextView tv1;
+        TextView tv2;
         ImageView modelsIV;
         View myView;
 
@@ -71,6 +79,22 @@ public class MyAdpter extends RecyclerView.Adapter<MyAdpter.MyHolder> {
 //the method that bind the view with the objects
         }
         public void bindData(final MyModels currentModel) {
+
+            double currentLat = currentModel.geometry.location.lat;
+            double currentLng = currentModel.geometry.location.lng;
+
+            Location.distanceBetween(MainActivity.newLat , MainActivity.newLng ,currentLat , currentLng , nearDistanceResults );
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+            nPreference = sharedPreferences.getString("list_preference_units" , "kilometre");
+            tv2 =(TextView) itemView.findViewById(R.id.radiusTV);
+            if(nPreference.equals("kilometre")){
+                roundedNDis = (double)Math.round( (nearDistanceResults[0]/1000 ) * 100d) / 100d;
+                tv2.setText(roundedNDis + " kilometre " );
+            }else {
+
+                roundedNDis = (double)Math.round( (((nearDistanceResults[0]*0.621371)/1000 ) ) * 100d) / 100d;
+                tv2.setText(roundedNDis + " miles " );
+            }
 
             tv = (TextView) itemView.findViewById(R.id.nameTV);
             tv.setText(currentModel.name);
