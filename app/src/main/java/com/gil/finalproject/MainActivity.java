@@ -7,16 +7,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.BatteryManager;
-import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -81,6 +77,11 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
             settingsFrag frag = new settingsFrag();
         getFragmentManager().beginTransaction().addToBackStack("fragSetting").replace(R.id.theMainLayout , frag).commit();
 
+        }
+        else if(item.getItemId() == R.id.exit){
+
+            android.os.Process.killProcess(android.os.Process.myPid());
+            System.exit(1);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -149,11 +150,11 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
                     List<Book> nlastSearches = Book.listAll(Book.class);
                     RecyclerView lastRV = (RecyclerView) findViewById(R.id.myRV);
                     lastRV.setLayoutManager(new GridLayoutManager(MainActivity.this, 1));
-                    RecyclerView.Adapter LastSearchAdpter = new LastSearchAdpter(MainActivity.this, nlastSearches);
+                    RecyclerView.Adapter LastSearchAdpter = new Book.CustomArrayAdpter(MainActivity.this, nlastSearches);
                     lastRV.setAdapter(LastSearchAdpter);
                     Toast.makeText(MainActivity.this, "OFFLINE - enable GPS and network providers ", Toast.LENGTH_SHORT).show();
                 } else {
-// if online , searching the query with minimum 3 chars to search
+// if online , searching the query with minimum 4 chars
 
 
                     if (newText.length() > 4) {
@@ -180,7 +181,6 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
                     }
                 }
                 return true;
-                //////////////////////////////////////////////////////////////////////////////////////////////////////////
             }
         });
         //replacing to detalis fragment
@@ -193,16 +193,9 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
     @Override
     protected void onPause() {
         super.onPause();
-    //    unregisterReceiver(changingConnection);
         unregisterReceiver(receiver);
         locationManager.removeUpdates(this);
 
-    }
-
-////////////////////////////////////////////////////////////
-    @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
     }
 
     //if the the gps was offline

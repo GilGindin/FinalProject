@@ -17,15 +17,5 @@ public class PowerConnectionReceiver extends BroadcastReceiver {
                 Toast.makeText(context, "The device is not charging", Toast.LENGTH_SHORT).show();
             }
 
-            /*
-            int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
-            boolean isCharge = status == BatteryManager.BATTERY_STATUS_CHARGING ||
-                    status == BatteryManager.BATTERY_STATUS_FULL;
-            if (isCharge) {
-                Toast.makeText(context, "Battery charging..", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(context, "disconnecting charge..", Toast.LENGTH_SHORT).show();
-            }
-            */
         }
 }

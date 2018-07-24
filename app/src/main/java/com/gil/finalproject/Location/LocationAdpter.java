@@ -10,13 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.gil.finalproject.Book;
 import com.gil.finalproject.MainActivity;
 import com.gil.finalproject.R;
 import com.gil.finalproject.myMapChnger;
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 import java.util.List;
 

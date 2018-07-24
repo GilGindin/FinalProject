@@ -22,7 +22,7 @@ public class FvoriteFrag extends Fragment {
 
      RecyclerView faveRV;
      List<Favorites> myFaveAL;
-    CustomArrayAdpter ArrayAdapter;
+    LastSearchAdpter ArrayAdapter;
     public List<Book> faveBook = null;
 
 
@@ -58,7 +58,7 @@ public class FvoriteFrag extends Fragment {
             for (int position = 0; position < myFaveAL.size(); position++) {
                 String nameDB = myFaveAL.get(position).name;
                 String adressDB = myFaveAL.get(position).adress;
-                //    double latDB = myFaveAL.get(position).geometry.location.lat;
+                //   double latDB = myFaveAL.get(position).geometry.location.lat;
                 //   double lngDB = myFaveAL.get(position).geometry.location.lng;
 //creasting new list and all the objects into it
                 List<Book> saveBooks = new ArrayList<>();
@@ -66,18 +66,23 @@ public class FvoriteFrag extends Fragment {
                 Book.saveInTx(saveBooks);
 
                 faveBook = Book.listAll(Book.class);
-
                 ArrayList<Book> newBokks = new ArrayList<>();
                 newBokks.addAll(faveBook);
 
 
                 faveRV.setLayoutManager(new GridLayoutManager(getActivity(), 1));
-                ArrayAdapter = new CustomArrayAdpter(getActivity(), myFaveAL);
+                ArrayAdapter = new LastSearchAdpter(getActivity(), faveBook);
                 faveRV.setHasFixedSize(true);
                 faveRV.setAdapter(ArrayAdapter);
                 ArrayAdapter.notifyDataSetChanged();
+             }
             }
-            }
+        faveBook = Book.listAll(Book.class);
+        faveRV.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+        LastSearchAdpter lastSearchAdpter = new LastSearchAdpter(getActivity(), faveBook);
+        faveRV.setHasFixedSize(true);
+        faveRV.setAdapter(lastSearchAdpter);
+        lastSearchAdpter.notifyDataSetChanged();
 
             return v;
         }
