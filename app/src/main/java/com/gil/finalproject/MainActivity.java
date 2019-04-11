@@ -45,6 +45,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements myMapChnger, LocationListener {
 
+      
     SearchView searchView;
     LocationManager locationManager;
     DetailsFragment detailsFragment;
