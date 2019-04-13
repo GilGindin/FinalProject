@@ -17,6 +17,7 @@ import com.gil.finalproject.MainActivity;
 import com.gil.finalproject.R;
 import com.gil.finalproject.myMapChnger;
 import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,16 +1,18 @@
 package com.gil.finalproject.Favorite;
 
 
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.gil.finalproject.Book;
 import com.gil.finalproject.LastSearchAdpter;
 import com.gil.finalproject.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,8 +22,8 @@ import java.util.List;
  */
 public class FvoriteFrag extends Fragment {
 
-     RecyclerView faveRV;
-     List<Favorites> myFaveAL;
+    RecyclerView faveRV;
+    List<Favorites> myFaveAL;
     LastSearchAdpter ArrayAdapter;
     public List<Book> faveBook = null;
 
@@ -37,7 +39,7 @@ public class FvoriteFrag extends Fragment {
         View v = inflater.inflate(R.layout.fragment_fvorite, container, false);
         faveRV = (RecyclerView) v.findViewById(R.id.favoriteRV);
 
-        if(faveBook != null){
+        if (faveBook != null) {
 
             faveBook = Book.listAll(Book.class);
             faveRV.setLayoutManager(new GridLayoutManager(getActivity(), 1));
@@ -75,8 +77,8 @@ public class FvoriteFrag extends Fragment {
                 faveRV.setHasFixedSize(true);
                 faveRV.setAdapter(ArrayAdapter);
                 ArrayAdapter.notifyDataSetChanged();
-             }
             }
+        }
         faveBook = Book.listAll(Book.class);
         faveRV.setLayoutManager(new GridLayoutManager(getActivity(), 1));
         LastSearchAdpter lastSearchAdpter = new LastSearchAdpter(getActivity(), faveBook);
@@ -84,7 +86,7 @@ public class FvoriteFrag extends Fragment {
         faveRV.setAdapter(lastSearchAdpter);
         lastSearchAdpter.notifyDataSetChanged();
 
-            return v;
-        }
+        return v;
+    }
 
 }

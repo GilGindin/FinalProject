@@ -1,7 +1,6 @@
 package com.gil.finalproject.Location;
 
 import android.annotation.SuppressLint;
-import android.support.v4.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -11,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.gil.finalproject.Book;
 import com.gil.finalproject.MainActivity;
 import com.gil.finalproject.R;
+import com.gil.finalproject.RetrofitInstance;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -75,7 +76,6 @@ public class LocationFrag extends Fragment {
         return v;
     }
 
-
     @SuppressLint("MissingPermission")
     public void searchText(String query) {
 
@@ -86,11 +86,7 @@ public class LocationFrag extends Fragment {
         }
         dialog = ProgressDialog.show(getActivity(), "searching..", "searching..");
 
-        retrofit = new Retrofit.Builder().baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        service = retrofit.create(EndPointForLocation.class);
+        service = RetrofitInstance.getRetrofitInstance().create(EndPointForLocation.class);
 
         String locationsData = null;
         if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION)

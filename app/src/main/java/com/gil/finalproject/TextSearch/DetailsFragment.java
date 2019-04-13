@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.gil.finalproject.Book;
 import com.gil.finalproject.R;
+import com.gil.finalproject.RetrofitInstance;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -66,17 +67,17 @@ public class DetailsFragment extends Fragment {
             e.printStackTrace();
         }
 
-        //creating retrofit and assign base url
-        retrofit = new Retrofit.Builder().
-                baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create()).
-                build();
-//connect to the retrofit class with interface class
-        service = retrofit.create(EndPointClient.class);
+        //connect to the retrofit class with interface class
+        service = RetrofitInstance.getRetrofitInstance().create(EndPointClient.class);
         //call for the results from the url by using retrofit
         Call<Myresults> myCall = service.getAllResults(decodedQuery, key);
         myCall.enqueue(new Callback<Myresults>() {
             @Override
             public void onResponse(Call<Myresults> call, Response<Myresults> response) {
+                if (!response.isSuccessful()){
+                    Log.d("", "onResponse:---------- "+response.code());
+                    return;
+                }
                 Myresults resultWithInnerObjects = response.body();
                 List<MyModels> alLPlacesResult = resultWithInnerObjects.results;
 

@@ -18,17 +18,16 @@ import java.util.List;
 public class Book extends SugarRecord {
 
 
-  public   String name;
-  public   String adress;
+    public String name;
+    public String adress;
     double lat;
     double lng;
-
 
 
     public Book() {
     }
 
-    public Book( String name, String adress, double lat, double lng) {
+    public Book(String name, String adress, double lat, double lng) {
         this.name = name;
         this.adress = adress;
         this.lat = lat;
@@ -43,7 +42,7 @@ public class Book extends SugarRecord {
     public static class CustomArrayAdpter extends RecyclerView.Adapter<CustomArrayAdpter.MyHolder> {
 
         Context context;
-        public  List<Book> allfev;
+        public List<Book> allfev;
 
         public CustomArrayAdpter(Context context, List<Book> allfev) {
             this.context = context;
@@ -53,7 +52,7 @@ public class Book extends SugarRecord {
         @Override
         public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-            View v = LayoutInflater.from(context).inflate(R.layout.favorite_single_layout , parent , false);
+            View v = LayoutInflater.from(context).inflate(R.layout.favorite_single_layout, parent, false);
             MyHolder single = new MyHolder(v);
 
             return single;
@@ -71,11 +70,12 @@ public class Book extends SugarRecord {
         public int getItemCount() {
             return allfev.size();
         }
-        public class MyHolder extends RecyclerView.ViewHolder{
+
+        public class MyHolder extends RecyclerView.ViewHolder {
 
             TextView text1;
             TextView text2;
-            View  view;
+            View view;
 
             public MyHolder(View itemView) {
                 super(itemView);
@@ -83,7 +83,7 @@ public class Book extends SugarRecord {
             }
 
 
-            public void bindData(Book currentFave){
+            public void bindData(Book currentFave) {
 
                 text1 = (TextView) itemView.findViewById(R.id.textView);
                 text1.setText(currentFave.name);

@@ -17,14 +17,12 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -47,8 +45,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements myMapChnger, LocationListener {
 
@@ -115,11 +111,11 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
         boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
         if (!isConnected || !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             isOffline = true;
-            List<Book> nlastSearches = Book.listAll(Book.class);
-            RecyclerView lastRV = (RecyclerView) findViewById(R.id.myRV);
-            lastRV.setLayoutManager(new GridLayoutManager(MainActivity.this, 1));
-            RecyclerView.Adapter LastSearchAdpter = new Book.CustomArrayAdpter(MainActivity.this, nlastSearches);
-            lastRV.setAdapter(LastSearchAdpter);
+//            List<Book> nlastSearches = Book.listAll(Book.class);
+//            RecyclerView lastRV = (RecyclerView) findViewById(R.id.myRV);
+//            lastRV.setLayoutManager(new GridLayoutManager(MainActivity.this, 1));
+//            RecyclerView.Adapter LastSearchAdpter = new Book.CustomArrayAdpter(MainActivity.this, nlastSearches);
+//            lastRV.setAdapter(LastSearchAdpter);
             Toast.makeText(MainActivity.this, "OFFLINE - please enable GPS and network providers ", Toast.LENGTH_SHORT).show();
         }
     }
@@ -228,6 +224,19 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
         }
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(receiver);
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+
+            locationManager.removeUpdates(this);
+        }
+
+    }
+
     //on pause stop all the app updates , such as gps listiner
     @Override
     protected void onPause() {
@@ -313,9 +322,7 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
     }
 
     @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
+    public void onStatusChanged(String provider, int status, Bundle extras) {}
 
     @Override
     public void onProviderEnabled(String provider) {

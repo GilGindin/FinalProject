@@ -21,12 +21,8 @@
             android:title="units" />
 
         <Preference
-            android:title = "Delete all favourites"
-            android:key="remove_favourites">
-        </Preference>
-
-
-
+            android:key="remove_favourites"
+            android:title="Delete all favourites"></Preference>
 
 
     </PreferenceCategory>
