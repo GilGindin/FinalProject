@@ -30,7 +30,7 @@ public class MyAdpter extends RecyclerView.Adapter<MyAdpter.MyHolder> {
      List<MyModels> allResults;
     Context context;
     String urlPhoto = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=";
-    String key ="&key=AIzaSyBQKf7VwlWtSsDHKdyFfVI5AvGSZS1dlW8";
+    String key ="&key=AIzaSyCAU7syPLk4OKPV7UlInRBfVkCXOH7Xrdw";
     public float [] nearDistanceResults = new float[10];
     public String nPreference = "kilometre";
     public double roundedNDis;

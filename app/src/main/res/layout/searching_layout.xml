@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:id="@+id/map_coneiner"
+    android:weightSum="6">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2">
+    <EditText
+        android:id="@+id/editText_location"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:hint="Search by your current location"
+        android:textSize="20sp"
+        android:textStyle="bold"/>
+
+    <Button
+        android:id="@+id/button_location"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/editText_location"
+        android:text="Go" />
+
+    <EditText
+        android:id="@+id/editText_name"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:hint="Search random"
+        android:layout_below="@+id/editText_location"
+        android:layout_marginTop="30dp"
+        android:textSize="20sp"
+        android:textStyle="bold"/>
+
+    <Button
+        android:id="@+id/button_search"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button_location"
+        android:layout_marginTop="24dp"
+        android:layout_toRightOf="@+id/editText_name"
+        android:text="Go" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/fragment_conteiner"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+</LinearLayout>

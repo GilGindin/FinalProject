@@ -10,8 +10,7 @@ import retrofit2.http.Query;
 
 public interface EndPointClient {
 
-
-    @GET("/maps/api/place/textsearch/json")
+    @GET("maps/api/place/textsearch/json")
     Call<Myresults> getAllResults(@Query("query") String query, @Query("key") String key);
 
 

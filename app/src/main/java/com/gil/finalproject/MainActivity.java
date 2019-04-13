@@ -1,9 +1,12 @@
 package com.gil.finalproject;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -13,7 +16,9 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,7 +28,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.CompoundButton;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Switch;
@@ -41,22 +48,28 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements myMapChnger, LocationListener {
 
-      
-    SearchView searchView;
-    LocationManager locationManager;
-    DetailsFragment detailsFragment;
-    public boolean isOffline;
-   public  Location myLocation;
+    public static final int LOCATION_KEY_REQUEST = 15;
+    private SearchView searchView;
+    private LocationManager locationManager;
+    private DetailsFragment detailsFragment;
+    private LocationFrag locationFragment;
+    private boolean isOffline;
+    private Location myLocation;
     static public double newLat;
     static public double newLng;
-    Switch myTextSwitch;
-    FragmentManager fragmentManager;
-    SensorManager sensorManager;
-    BroadcastReceiver receiver;
+    private Switch myTextSwitch;
+    private FragmentManager fragmentManager;
+    private SensorManager sensorManager;
+    private BroadcastReceiver receiver;
+    private Button button_location;
+    private Button button_search;
+    private EditText editText_location;
+    private EditText editText_name;
 
 
     //Action menu bar
@@ -71,15 +84,13 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
         if (item.getItemId() == R.id.favoriteFrag) {
             FvoriteFrag favoriteFrag = new FvoriteFrag();
             getFragmentManager().beginTransaction().addToBackStack("replacing to favorite")
-                    .replace(R.id.theMainLayout,favoriteFrag).commit();
+                    .replace(R.id.theMainLayout, favoriteFrag).commit();
             return true;
-        }
-        else if(item.getItemId() == R.id.sharedPRef){
+        } else if (item.getItemId() == R.id.sharedPRef) {
             settingsFrag frag = new settingsFrag();
-        getFragmentManager().beginTransaction().addToBackStack("fragSetting").replace(R.id.theMainLayout , frag).commit();
+            getFragmentManager().beginTransaction().addToBackStack("fragSetting").replace(R.id.theMainLayout, frag).commit();
 
-        }
-        else if(item.getItemId() == R.id.exit){
+        } else if (item.getItemId() == R.id.exit) {
 
             android.os.Process.killProcess(android.os.Process.myPid());
             System.exit(1);
@@ -91,30 +102,96 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.searching_layout);
 
-        detailsFragment = new DetailsFragment();
-        myTextSwitch  = (Switch) findViewById(R.id.switchBTN);
-        searchView = (SearchView) findViewById(R.id.searchSV);
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        sensorManager= (SensorManager) getSystemService(SENSOR_SERVICE);
+        setButton();
+        checkLocationPermission();
+        runtimePermission();
+        checkConnectivityManager();
+
+//search view
+        // the main query from the user to the app
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//
+//                return false;
+//    }
+//
+//    //
+//    @Override
+//    public boolean onQueryTextChange(final String newText) {
+        //checking if the user have internet
 
 
+//                ///OFFLINE mode
+//                // taking the list from the last results who was searching by the user
 
+//// if online , searching the query with minimum 4 chars
+//
+//
+//                    if (newText.length() > 4) {
+//                        Boolean switchState = myTextSwitch.isChecked();
+//                        myTextSwitch.setChecked(false);
+//
+////checking if the switch button is on or off
+//                        myTextSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                            @Override
+//                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//
+//                                if (isChecked) {
+//
+////method that excist in detalis fragment
+//                                    LocationFrag locationFragment = new LocationFrag();
+//                                    locationFragment.textToSearch = newText;
+//                                    getFragmentManager().beginTransaction().addToBackStack("replacing to location frag").replace(R.id.fragment_conteiner, locationFragment).commit();
+//                                    //  locationFragment.searchText(newText);
+//                                }
+//                            }
+//                        });
+//                        detailsFragment.searchText(newText);
+//
+//                    }
+//                }
+//                return true;
+//            }
+//        });
+//        //replacing to detalis fragment
+//
+//
+    }
 
+    private void checkConnectivityManager() {
+        ConnectivityManager cm = (ConnectivityManager) MainActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+        if (!isConnected || !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            isOffline = true;
+            List<Book> nlastSearches = Book.listAll(Book.class);
+            RecyclerView lastRV = (RecyclerView) findViewById(R.id.myRV);
+            lastRV.setLayoutManager(new GridLayoutManager(MainActivity.this, 1));
+            RecyclerView.Adapter LastSearchAdpter = new Book.CustomArrayAdpter(MainActivity.this, nlastSearches);
+            lastRV.setAdapter(LastSearchAdpter);
+            Toast.makeText(MainActivity.this, "OFFLINE - please enable GPS and network providers ", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void runtimePermission() {
 
 // checking premission for gps location
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 17);
-           GilLocationResult();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 17);
+            }
+            GilLocationResult();
         } else {
             //if there's location premission
             //trying to take the exact location by the GPS
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 500, this);
-             myLocation = ((LocationManager) getSystemService(LOCATION_SERVICE)).getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            myLocation = ((LocationManager) getSystemService(LOCATION_SERVICE)).getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (myLocation == null) {
                 Log.e("Location", "not found");
             } else {
@@ -125,77 +202,95 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
             }
 
         }
-
-
-//search view
-        // the main query from the user to the app
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(final String newText) {
-                //checking if the user have internet
-                ConnectivityManager cm = (ConnectivityManager) MainActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-                boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-                locationManager = (LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE);
-
-                ///OFFLINE mode
-                // taking the list from the last results who was searching by the user
-                if (!isConnected || !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                    isOffline = true;
-                    List<Book> nlastSearches = Book.listAll(Book.class);
-                    RecyclerView lastRV = (RecyclerView) findViewById(R.id.myRV);
-                    lastRV.setLayoutManager(new GridLayoutManager(MainActivity.this, 1));
-                    RecyclerView.Adapter LastSearchAdpter = new Book.CustomArrayAdpter(MainActivity.this, nlastSearches);
-                    lastRV.setAdapter(LastSearchAdpter);
-                    Toast.makeText(MainActivity.this, "OFFLINE - enable GPS and network providers ", Toast.LENGTH_SHORT).show();
-                } else {
-// if online , searching the query with minimum 4 chars
-
-
-                    if (newText.length() > 4) {
-                        Boolean switchState = myTextSwitch.isChecked();
-                        myTextSwitch.setChecked(false);
-
-//checking if the switch button is on or off
-                        myTextSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                            @Override
-                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                                if(isChecked){
-
-//method that excist in detalis fragment
-                                    LocationFrag locationFragment = new LocationFrag();
-                                    locationFragment.textToSearch=newText;
-                                    getFragmentManager().beginTransaction().addToBackStack("replacing to location frag").replace(R.id.theMainLayout, locationFragment).commit();
-                                  //  locationFragment.searchText(newText);
-                                }
-                            }
-                        });
-                            detailsFragment.searchText(newText);
-
-                    }
-                }
-                return true;
-            }
-        });
-        //replacing to detalis fragment
-        fragmentManager = getFragmentManager();
-        getFragmentManager().beginTransaction().addToBackStack("details frag").replace(R.id.theMainLayout, detailsFragment).commit();
-
     }
 
-//on pause stop all the app updates , such as gps listiner
+
+    private void setButton() {
+        detailsFragment = new DetailsFragment();
+        locationFragment = new LocationFrag();
+        editText_location = findViewById(R.id.editText_location);
+        editText_name = findViewById(R.id.editText_name);
+        myTextSwitch = (Switch) findViewById(R.id.switchBTN);
+        searchView = (SearchView) findViewById(R.id.searchSV);
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        button_location = findViewById(R.id.button_location);
+        button_location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                locationManager = (LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE);
+                String textSearch = editText_name.getText().toString();
+                locationFragment.textToSearch = textSearch;
+                getSupportFragmentManager().beginTransaction().addToBackStack("replacing to location frag").replace(R.id.fragment_conteiner, locationFragment).commit();
+
+            }
+        });
+        button_search = findViewById(R.id.button_search);
+        button_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String textLocation = editText_name.getText().toString();
+                detailsFragment.searchText(textLocation);
+                //getSupportFragmentManager().beginTransaction().addToBackStack("details frag").replace(R.id.fragment_conteiner, detailsFragment).commit();
+            }
+        });
+    }
+
+    private boolean checkLocationPermission() {
+
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                new AlertDialog.Builder(this)
+                        .setTitle("GPS PROVIDER permission")
+                        .setMessage("You need to allow Gps provider")
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Prompt the user once explanation has been shown
+                                ActivityCompat.requestPermissions(MainActivity.this,
+                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                        LOCATION_KEY_REQUEST);
+                            }
+                        })
+                        .create()
+                        .show();
+
+
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        LOCATION_KEY_REQUEST);
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    //on pause stop all the app updates , such as gps listiner
     @Override
     protected void onPause() {
         super.onPause();
         unregisterReceiver(receiver);
-        locationManager.removeUpdates(this);
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+
+            locationManager.removeUpdates(this);
+        }
 
     }
 
@@ -204,7 +299,7 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
     @Override
     protected void onResume() {
         super.onResume();
-         receiver = new PowerConnectionReceiver();
+        receiver = new PowerConnectionReceiver();
         IntentFilter ifilter = new IntentFilter();
         ifilter.addAction(Intent.ACTION_POWER_CONNECTED);
         ifilter.addAction(Intent.ACTION_POWER_DISCONNECTED);
@@ -212,9 +307,9 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
 
         onProviderEnabled(locationManager.GPS_PROVIDER);
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-               == PackageManager.PERMISSION_GRANTED &&
+                == PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
-                       == PackageManager.PERMISSION_GRANTED) {
+                        == PackageManager.PERMISSION_GRANTED) {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 500, this);
             locationManager = (LocationManager) MainActivity.this.getSystemService(Context.LOCATION_SERVICE);
             GilLocationResult();
@@ -228,13 +323,12 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
     public void changeFragment(final double lat, final double lng) {
 
         MapFragment LocationFragment = new MapFragment();
-        if(isTablet()){
-            getFragmentManager().beginTransaction().addToBackStack("add map").replace(R.id.largeMap , LocationFragment).commit();
+        if (isTablet()) {
+            getFragmentManager().beginTransaction().addToBackStack("add map").replace(R.id.largeMap, LocationFragment).commit();
 
-        }
-        else {
+        } else {
 
-            getFragmentManager().beginTransaction().addToBackStack("replacing").replace(R.id.theMainLayout, LocationFragment).commit();
+            getFragmentManager().beginTransaction().addToBackStack("replacing").replace(R.id.map_coneiner, LocationFragment).commit();
         }
         LocationFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
@@ -256,13 +350,13 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
 
         FvoriteFrag frag = new FvoriteFrag();
         Bundle bundle = new Bundle();
-        bundle.putString("name" ,name);
-        bundle.putString("adress" , adress);
+        bundle.putString("name", name);
+        bundle.putString("adress", adress);
 
         frag.setArguments(bundle);
         Toast.makeText(this, "saved to your favorite list", Toast.LENGTH_SHORT).show();
-        getFragmentManager().beginTransaction().addToBackStack("replacing to favorite fragment").replace(R.id.theMainLayout , frag).commit();
-       // getFragmentManager().beginTransaction().addToBackStack("replace to favorite").replace(R.id.theMainLayout , frag).commit();
+        getFragmentManager().beginTransaction().addToBackStack("replacing to favorite fragment").replace(R.id.theMainLayout, frag).commit();
+        // getFragmentManager().beginTransaction().addToBackStack("replace to favorite").replace(R.id.theMainLayout , frag).commit();
     }
 
 
@@ -291,59 +385,72 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
     public void onProviderDisabled(String provider) {
 
     }
-//when getting premission to gps provider
+
+    //when getting premission to gps provider
     @SuppressLint("MissingPermission")
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == 15) {
+        switch (requestCode) {
+            case LOCATION_KEY_REQUEST: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //get location
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 500, this);
-                Location loc = ((LocationManager) getSystemService(LOCATION_SERVICE)).getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if (loc == null) {
-                    Log.e("PSY", "not found");
-                } else {
-                    Log.e("/////////", loc.getLatitude() + " " + loc.getLongitude());
+                    // permission was granted, yay! Do the
+                    // location-related task you need to do.
+                    if (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED) {
+                        //get location
+                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 500, this);
+                        Location loc = ((LocationManager) getSystemService(LOCATION_SERVICE)).getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                        if (loc == null) {
+
+                        } else {
+                            Log.e("/////////", loc.getLatitude() + " " + loc.getLongitude());
+                        }
+                    } else {
+                        Toast.makeText(this, "please allow GPS provider...", Toast.LENGTH_SHORT).show();
+                    }
                 }
-            } else {
-                Toast.makeText(this, "please allow GPS provider...", Toast.LENGTH_SHORT).show();
             }
         }
     }
+
     //method for locatioin callabck
-    public void GilLocationResult () {
+    public void GilLocationResult() {
 
         LocationCallback mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 if (locationResult == null) {
-                  Log.e("LocationUpdate","No result :'( ");
+                    Log.e("LocationUpdate", "No result :'( ");
                 }
                 for (Location location : locationResult.getLocations()) {
-                    Log.e("new location",location.getLatitude() + " " + location.getLongitude());
+                    Log.e("new location", location.getLatitude() + " " + location.getLongitude());
                 }
             }
 
 
         };
     }
-//method to check if the app running on tablet or phone
-    public boolean isTablet(){
-      boolean tablet;
-        LinearLayout Xlarge =(LinearLayout) findViewById(R.id.largeMap);
+
+    //method to check if the app running on tablet or phone
+    public boolean isTablet() {
+        boolean tablet;
+        LinearLayout Xlarge = (LinearLayout) findViewById(R.id.largeMap);
         LinearLayout Large = (LinearLayout) findViewById(R.id.largeMap);
-        if(Xlarge != null || Large != null){
+        if (Xlarge != null || Large != null) {
             tablet = true;
-        }else {
-            tablet= false;
+        } else {
+            tablet = false;
         }
         return tablet;
-      }
-     }
+    }
+}
 
 
 
