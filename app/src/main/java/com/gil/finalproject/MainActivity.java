@@ -18,6 +18,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -30,9 +31,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.SearchView;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -54,7 +53,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements myMapChnger, LocationListener {
 
     public static final int LOCATION_KEY_REQUEST = 15;
-    private SearchView searchView;
     private LocationManager locationManager;
     private DetailsFragment detailsFragment;
     private LocationFrag locationFragment;
@@ -68,8 +66,8 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
     private BroadcastReceiver receiver;
     private Button button_location;
     private Button button_search;
-    private EditText editText_location;
-    private EditText editText_name;
+    private TextInputEditText editText_location;
+    private TextInputEditText editText_name;
 
 
     //Action menu bar
@@ -84,11 +82,11 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
         if (item.getItemId() == R.id.favoriteFrag) {
             FvoriteFrag favoriteFrag = new FvoriteFrag();
             getFragmentManager().beginTransaction().addToBackStack("replacing to favorite")
-                    .replace(R.id.theMainLayout, favoriteFrag).commit();
+                    .replace(R.id.map_coneiner, favoriteFrag).commit();
             return true;
         } else if (item.getItemId() == R.id.sharedPRef) {
             settingsFrag frag = new settingsFrag();
-            getFragmentManager().beginTransaction().addToBackStack("fragSetting").replace(R.id.theMainLayout, frag).commit();
+            getFragmentManager().beginTransaction().addToBackStack("fragSetting").replace(R.id.map_coneiner, frag).commit();
 
         } else if (item.getItemId() == R.id.exit) {
 
@@ -109,56 +107,6 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
         runtimePermission();
         checkConnectivityManager();
 
-//search view
-        // the main query from the user to the app
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//
-//                return false;
-//    }
-//
-//    //
-//    @Override
-//    public boolean onQueryTextChange(final String newText) {
-        //checking if the user have internet
-
-
-//                ///OFFLINE mode
-//                // taking the list from the last results who was searching by the user
-
-//// if online , searching the query with minimum 4 chars
-//
-//
-//                    if (newText.length() > 4) {
-//                        Boolean switchState = myTextSwitch.isChecked();
-//                        myTextSwitch.setChecked(false);
-//
-////checking if the switch button is on or off
-//                        myTextSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//                            @Override
-//                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//
-//                                if (isChecked) {
-//
-////method that excist in detalis fragment
-//                                    LocationFrag locationFragment = new LocationFrag();
-//                                    locationFragment.textToSearch = newText;
-//                                    getFragmentManager().beginTransaction().addToBackStack("replacing to location frag").replace(R.id.fragment_conteiner, locationFragment).commit();
-//                                    //  locationFragment.searchText(newText);
-//                                }
-//                            }
-//                        });
-//                        detailsFragment.searchText(newText);
-//
-//                    }
-//                }
-//                return true;
-//            }
-//        });
-//        //replacing to detalis fragment
-//
-//
     }
 
     private void checkConnectivityManager() {
@@ -211,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
         editText_location = findViewById(R.id.editText_location);
         editText_name = findViewById(R.id.editText_name);
         myTextSwitch = (Switch) findViewById(R.id.switchBTN);
-        searchView = (SearchView) findViewById(R.id.searchSV);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         button_location = findViewById(R.id.button_location);
@@ -232,6 +179,7 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
             @Override
             public void onClick(View view) {
                 String textLocation = editText_name.getText().toString();
+
                 detailsFragment.searchText(textLocation);
                 //getSupportFragmentManager().beginTransaction().addToBackStack("details frag").replace(R.id.fragment_conteiner, detailsFragment).commit();
             }
@@ -355,8 +303,7 @@ public class MainActivity extends AppCompatActivity implements myMapChnger, Loca
 
         frag.setArguments(bundle);
         Toast.makeText(this, "saved to your favorite list", Toast.LENGTH_SHORT).show();
-        getFragmentManager().beginTransaction().addToBackStack("replacing to favorite fragment").replace(R.id.theMainLayout, frag).commit();
-        // getFragmentManager().beginTransaction().addToBackStack("replace to favorite").replace(R.id.theMainLayout , frag).commit();
+        getFragmentManager().beginTransaction().addToBackStack("replacing to favorite fragment").replace(R.id.fragment_conteiner, frag).commit();
     }
 
 
